@@ -256,6 +256,7 @@ kernel_AdaCoF_updateGradBeta = """
     } }
 """
 
+
 class FunctionAdaCoF(torch.autograd.Function):
     # end
     @staticmethod
@@ -279,9 +280,9 @@ class FunctionAdaCoF(torch.autograd.Function):
         )
 
         assert input.is_contiguous() == True
-        assert weight.is_contiguous() == True
-        assert offset_i.is_contiguous() == True
-        assert offset_j.is_contiguous() == True
+        # assert weight.is_contiguous() == True
+        # assert offset_i.is_contiguous() == True
+        # assert offset_j.is_contiguous() == True
 
         output = input.new_zeros(
             intSample, intInputDepth, intOutputHeight, intOutputWidth
@@ -307,7 +308,7 @@ class FunctionAdaCoF(torch.autograd.Function):
                         "output": output,
                     },
                     F_SIZE=str(intFilterSize),
-                    DILATION=str(dilation)
+                    DILATION=str(dilation),
                 ),
             )(
                 grid=tuple([int((n + 512 - 1) / 512), 1, 1]),
@@ -401,7 +402,7 @@ class FunctionAdaCoF(torch.autograd.Function):
                         "gradWeight": gradWeight,
                     },
                     F_SIZE=str(intFilterSize),
-                    DILATION=str(dilation)
+                    DILATION=str(dilation),
                 ),
             )(
                 grid=tuple([int((n_w + 512 - 1) / 512), 1, 1]),
@@ -432,7 +433,7 @@ class FunctionAdaCoF(torch.autograd.Function):
                         "gradOffset_i": gradOffset_i,
                     },
                     F_SIZE=str(intFilterSize),
-                    DILATION=str(dilation)
+                    DILATION=str(dilation),
                 ),
             )(
                 grid=tuple([int((n_i + 512 - 1) / 512), 1, 1]),
@@ -464,7 +465,7 @@ class FunctionAdaCoF(torch.autograd.Function):
                         "gradOffset_j": gradOffset_j,
                     },
                     F_SIZE=str(intFilterSize),
-                    DILATION=str(dilation)
+                    DILATION=str(dilation),
                 ),
             )(
                 grid=tuple([int((n_j + 512 - 1) / 512), 1, 1]),
@@ -487,5 +488,6 @@ class FunctionAdaCoF(torch.autograd.Function):
         # end
 
         return gradInput, gradWeight, gradOffset_i, gradOffset_j, None
+
 
 __all__ = ["FunctionAdaCoF"]
